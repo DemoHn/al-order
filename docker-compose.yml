@@ -1,0 +1,22 @@
+version: "3.2"
+services:
+  mysql:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_USER=general-user
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=orders
+    ports:
+      - target: 3862
+        published: 3862
+        mode: host    
+  al-order:
+    build:
+      context: .
+    ports:
+      - target: 8080
+        published: 8080
+        mode: host
+    depends_on:
+      - mysql
