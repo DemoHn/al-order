@@ -6,9 +6,9 @@ services:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_USER=general-user
       - MYSQL_PASSWORD=password
-      - MYSQL_DATABASE=orders
+      - MYSQL_DATABASE=al-order
     ports:
-      - target: 3862
+      - target: 3306
         published: 3862
         mode: host    
   al-order:
