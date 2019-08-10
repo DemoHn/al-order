@@ -2,7 +2,6 @@ package app
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"os"
 	"reflect"
@@ -33,12 +32,11 @@ func TestMain(m *testing.M) {
 
 // setup & teardown testcases globally
 func setup() error {
-	m, err := util.ParseEnvFromFile("../.env")
+	err := util.RegisterEnvFromFile("../.env")
 	if err != nil {
 		return err
 	}
-	dbURL := m["DATABASE_URL"]
-	fmt.Println(dbURL)
+	dbURL := os.Getenv("DATABASE_URL")
 	if err := util.ExecMigration(dbURL, "../sql/up.sql"); err != nil {
 		return err
 	}
@@ -290,19 +288,19 @@ func Test_encodeLocationInfo(t *testing.T) {
 			args: args{
 				info: LocationInfo{},
 			},
-			want: "{\"StartLat\":0,\"StartLng\":0,\"EndLat\":0,\"EndLng\":0}",
+			want: "{\"StartLat\":\"0\",\"StartLng\":\"\",\"EndLat\":\"\",\"EndLng\":\"\"}",
 		},
 		{
 			name: "normal data",
 			args: args{
 				info: LocationInfo{
-					StartLat: -45.3,
-					StartLng: 123.6,
-					EndLat:   12,
-					EndLng:   12.234,
+					StartLat: "-45.3",
+					StartLng: "123.6",
+					EndLat:   "12",
+					EndLng:   "12.234",
 				},
 			},
-			want: "{\"StartLat\":-45.3,\"StartLng\":123.6,\"EndLat\":12,\"EndLng\":12.234}",
+			want: "{\"StartLat\":\"-45.3\",\"StartLng\":\"123.6\",\"EndLat\":\"12\",\"EndLng\":\"12.234\"}",
 		},
 	}
 	for _, tt := range tests {
@@ -327,20 +325,20 @@ func Test_decodeLocationInfo(t *testing.T) {
 		{
 			name: "if empty",
 			args: args{
-				data: "{\"StartLat\":0,\"StartLng\":0,\"EndLat\":0,\"EndLng\":0}",
+				data: "{\"StartLat\":\"\",\"StartLng\":\"\",\"EndLat\":\"\",\"EndLng\":\"\"}",
 			},
 			want: LocationInfo{},
 		},
 		{
 			name: "if has data",
 			args: args{
-				data: "{\"StartLat\":-45.3,\"StartLng\":123.6,\"EndLat\":12,\"EndLng\":12.234}",
+				data: "{\"StartLat\":\"-45.3\",\"StartLng\":\"123.6\",\"EndLat\":\"12\",\"EndLng\":\"12.234\"}",
 			},
 			want: LocationInfo{
-				StartLat: -45.3,
-				StartLng: 123.6,
-				EndLat:   12,
-				EndLng:   12.234,
+				StartLat: "-45.3",
+				StartLng: "123.6",
+				EndLat:   "12",
+				EndLng:   "12.234",
 			},
 		},
 	}

@@ -33,10 +33,10 @@ type Order struct {
 
 // LocationInfo - record the start & dest points' latitude and longitude
 type LocationInfo struct {
-	StartLat float32
-	StartLng float32
-	EndLat   float32
-	EndLng   float32
+	StartLat string
+	StartLng string
+	EndLat   string
+	EndLng   string
 }
 
 // SaveNewOrder - store new order data to DB
