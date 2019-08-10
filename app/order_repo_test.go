@@ -87,6 +87,15 @@ func TestSaveNewOrder(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "save another data",
+			args: args{
+				id:       "0100",
+				distance: 20.5,
+				location: LocationInfo{},
+			},
+			wantErr: false,
+		},
+		{
 			name: "insert duplicate data",
 			args: args{
 				id:       "0000",
@@ -185,6 +194,83 @@ func TestUpdateOrderStatus(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := UpdateOrderStatus(db, tt.args.id, tt.args.newStatus); (err != nil) != tt.wantErr {
 				t.Errorf("UpdateOrderStatus() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestListOrders(t *testing.T) {
+	type args struct {
+		limit  int
+		offset int
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    []Order
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+		{
+			name: "find all orders",
+			args: args{
+				limit:  10,
+				offset: 0,
+			},
+			want: []Order{
+				{
+					ID:         "0000",
+					sequenceID: 1,
+					Location:   LocationInfo{},
+					Distance:   12.5,
+					Status:     Taken,
+				},
+				{
+					ID:         "0100",
+					sequenceID: 2,
+					Location:   LocationInfo{},
+					Distance:   20.5,
+					Status:     Unassigned,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "find orders with limit",
+			args: args{
+				limit:  1,
+				offset: 1,
+			},
+			want: []Order{
+				{
+					ID:         "0100",
+					sequenceID: 2,
+					Location:   LocationInfo{},
+					Distance:   20.5,
+					Status:     Unassigned,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "find no record (and won't return error)",
+			args: args{
+				limit:  1,
+				offset: 10,
+			},
+			want:    []Order{},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := ListOrders(db, tt.args.limit, tt.args.offset)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ListOrders() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ListOrders() = %v, want %v", got, tt.want)
 			}
 		})
 	}

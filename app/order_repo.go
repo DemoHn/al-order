@@ -79,6 +79,33 @@ func UpdateOrderStatus(db *sql.DB, id string, newStatus OrderStatus) error {
 	return nil
 }
 
+// ListOrders by limits
+func ListOrders(db *sql.DB, limit int, offset int) ([]Order, error) {
+	listStmt := fmt.Sprintf("select %s from %s limit ? offset ?", attrAll, tbName)
+	orders := make([]Order, 0)
+
+	rows, err := db.Query(listStmt, limit, offset)
+	if err != nil {
+		return orders, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var order Order
+		var strLocation string
+		if err := rows.Scan(&order.sequenceID, &order.ID, &order.Status, &order.Distance, &strLocation); err != nil {
+			return []Order{}, err
+		}
+		order.Location = decodeLocationInfo(strLocation)
+		orders = append(orders, order)
+	}
+
+	if err := rows.Err(); err != nil {
+		return []Order{}, err
+	}
+	return orders, nil
+}
+
 //// private function
 
 // encodeLocationInfo - from LocationInfo to json string
