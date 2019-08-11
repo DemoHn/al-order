@@ -1,9 +1,17 @@
 package app
 
 import (
+	"fmt"
 	"testing"
 )
 
+func init() {
+	// replace default function with mock function
+	fetchData = func(string) ([]byte, error) {
+		fmt.Println("DIU---------")
+		return []byte{}, nil
+	}
+}
 func TestGetRouteDistance(t *testing.T) {
 
 	GetRouteDistance(LocationInfo{

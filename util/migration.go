@@ -1,7 +1,6 @@
 package util
 
 import (
-	"database/sql"
 	"fmt"
 	"io/ioutil"
 	"strings"
@@ -16,17 +15,9 @@ import (
 // param: source [string]: available db source, must be `mysql://` URL format
 // param: file [string]: SQL file to execute
 func ExecMigration(source string, file string) error {
-	// Check if URL is leading with mysql://
-	// For now we only support mysql
-	if !strings.HasPrefix(source, "mysql://") {
-		return fmt.Errorf("source:%s is invalid since we only support `mysql://` prefix", source)
-	}
-	var dataSource = strings.Replace(source, "mysql://", "", 1)
-
-	// ensure mysql could be opened
-	db, err := sql.Open("mysql", dataSource)
+	db, err := OpenDB(source)
 	if err != nil {
-		return fmt.Errorf("open db error: %s", err.Error())
+		return err
 	}
 
 	// ensure file could be opened

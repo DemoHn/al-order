@@ -27,6 +27,9 @@ type GMapDirectionResp struct {
 	}
 }
 
+// global function adapters
+var fetchData func(string) ([]byte, error)
+
 // GetRouteDistance - get actual distance from
 func GetRouteDistance(loc LocationInfo) (bool, float32, error) {
 	apiKey := os.Getenv("GOOGLE_MAP_APIKEY")
@@ -76,7 +79,10 @@ func formatPoints(loc LocationInfo) (string, string) {
 	return startLoc, endLoc
 }
 
-func fetchData(finalURL string) ([]byte, error) {
+// fetchDataDefault - default function of fetchData()
+// since there's a change to replace fetchData() to a mock function
+// for testing usage.
+func fetchDataDefault(finalURL string) ([]byte, error) {
 	resp, err := http.Get(finalURL)
 	if err != nil {
 		return []byte{}, err
@@ -89,4 +95,10 @@ func fetchData(finalURL string) ([]byte, error) {
 	}
 
 	return respBody, nil
+}
+
+func init() {
+	// add default function at beginning
+	// this variable is set for mock testing
+	fetchData = fetchDataDefault
 }

@@ -10,7 +10,13 @@ services:
     ports:
       - target: 3306
         published: 3862
-        mode: host    
+        mode: host
+  redis:
+    image: redis:4.0.14
+    ports:
+      - target: 6379
+        published: 6379
+        mode: host 
   al-order:
     build:
       context: .
@@ -20,3 +26,4 @@ services:
         mode: host
     depends_on:
       - mysql
+      - redis

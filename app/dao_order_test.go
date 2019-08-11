@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"reflect"
-	"strings"
 	"testing"
 
 	// import mysql driver
@@ -40,14 +39,15 @@ func setup() error {
 	if err := util.ExecMigration(dbURL, "../sql/up.sql"); err != nil {
 		return err
 	}
-
-	dbURLs := strings.Split(dbURL, "://")
 	var e error
-	if db, e = sql.Open(dbURLs[0], dbURLs[1]); e != nil {
+	db, e = util.OpenDB(dbURL)
+	if e != nil {
 		return e
 	}
+
 	return nil
 }
+
 func teardown() error {
 	m, err := util.ParseEnvFromFile("../.env")
 	if err != nil {
@@ -288,7 +288,7 @@ func Test_encodeLocationInfo(t *testing.T) {
 			args: args{
 				info: LocationInfo{},
 			},
-			want: "{\"StartLat\":\"0\",\"StartLng\":\"\",\"EndLat\":\"\",\"EndLng\":\"\"}",
+			want: "{\"StartLat\":\"\",\"StartLng\":\"\",\"EndLat\":\"\",\"EndLng\":\"\"}",
 		},
 		{
 			name: "normal data",
