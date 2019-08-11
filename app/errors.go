@@ -1,5 +1,11 @@
 package app
 
+import (
+	"fmt"
+
+	echo "github.com/labstack/echo"
+)
+
 // Error - customized AppError for displaying error response
 type Error struct {
 	Message    string
@@ -66,4 +72,29 @@ func ErrOrderHasTaken() *Error {
 		Code:       10005,
 		Details:    "",
 	}
+}
+
+// ErrUnknownFatal - unknown fatal error
+func ErrUnknownFatal(err error) *Error {
+	return &Error{
+		Message:    "unknown fatal error",
+		StatusCode: 500,
+		Code:       11000,
+		Details:    err.Error(),
+	}
+}
+
+// ErrGeneralHTTP - from echo's internal server
+func ErrGeneralHTTP(err *echo.HTTPError) *Error {
+	return &Error{
+		Message:    fmt.Sprintf("general HTTP error: %s", err.Error()),
+		StatusCode: err.Code,
+		Code:       12000,
+		Details:    fmt.Sprintf("%v", err.Message),
+	}
+}
+
+// implement type `error` interface:
+func (e *Error) Error() string {
+	return e.Message
 }
