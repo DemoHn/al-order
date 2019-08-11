@@ -113,7 +113,7 @@ func TakeOrder(orderID string) *Error {
 }
 
 // ListOrder - list recorded orders
-func ListOrder(page *int, limit *int) (*[]OrderResponse, *Error) {
+func ListOrder(page *int, limit *int) ([]OrderResponse, *Error) {
 	var rPage, rLimit int
 	// get page, limit
 	if page == nil {
@@ -145,7 +145,7 @@ func ListOrder(page *int, limit *int) (*[]OrderResponse, *Error) {
 	for index, order := range orders {
 		tOrders[index] = *transformOrderResp(&order)
 	}
-	return &tOrders, nil
+	return tOrders, nil
 }
 
 // private functions
@@ -197,7 +197,7 @@ func deleteOrderLock(client *redis.Client, orderID string) error {
 	return nil
 }
 
-// init function
+// init function & adapters
 func init() {
 	dSaveNewOrder = SaveNewOrder
 	dFindOneOrder = FindOneOrder

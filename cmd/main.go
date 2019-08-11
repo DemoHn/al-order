@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/DemoHn/al-order/app"
 	"github.com/DemoHn/al-order/util"
 )
 
@@ -47,5 +48,5 @@ func main() {
 
 // StartServer - start al-order server to handle requests
 func StartServer(host string, port int) {
-
+	log.Fatal(app.New().Start(host, port))
 }

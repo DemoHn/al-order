@@ -35,7 +35,9 @@ func ParseEnvFromFile(envFile string) (map[string]string, error) {
 	var strEnvs = strings.Split(string(envs), "\n")
 	for _, strEnv := range strEnvs {
 		kvPair := re.FindStringSubmatch(strEnv)
-		envMap[kvPair[1]] = kvPair[2]
+		if len(kvPair) > 2 {
+			envMap[kvPair[1]] = kvPair[2]
+		}
 	}
 
 	return envMap, nil
