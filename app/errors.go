@@ -65,11 +65,21 @@ func ErrNoRoute() *Error {
 }
 
 // ErrOrderHasTaken -
-func ErrOrderHasTaken() *Error {
+func ErrOrderHasTaken(details string) *Error {
 	return &Error{
 		Message:    "order has been taken by somebody else",
 		StatusCode: 400,
 		Code:       10005,
+		Details:    details,
+	}
+}
+
+// ErrInputValidation - input validation error
+func ErrInputValidation(err error) *Error {
+	return &Error{
+		Message:    fmt.Sprintf("validate input data failed: %s", err.Error()),
+		StatusCode: 400,
+		Code:       10006,
 		Details:    "",
 	}
 }

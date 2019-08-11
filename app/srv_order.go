@@ -86,7 +86,7 @@ func TakeOrder(orderID string) *Error {
 	}
 	defer rDelOrderLock(r, orderID)
 	if lockResult == false {
-		return ErrOrderHasTaken()
+		return ErrOrderHasTaken("from redis")
 	}
 
 	// 02. find if orderID exists
@@ -103,7 +103,7 @@ func TakeOrder(orderID string) *Error {
 	}
 	// 03. check if orderID status is still unassigned
 	if order.Status != Unassigned {
-		return ErrOrderHasTaken()
+		return ErrOrderHasTaken("from db")
 	}
 	// 04. so it's time to update the status!
 	if err := dUpdateOrderStatus(db, orderID, Taken); err != nil {

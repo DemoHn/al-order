@@ -6,6 +6,7 @@ import (
 	"log"
 
 	echo "github.com/labstack/echo"
+	echoMW "github.com/labstack/echo/middleware"
 )
 
 // App - App instance
@@ -16,6 +17,7 @@ type App struct {
 // New - new echo application
 func New() *App {
 	e := echo.New()
+	bindMiddlewares(e)
 	bindRoutes(e)
 
 	return &App{
@@ -39,6 +41,9 @@ func bindRoutes(e *echo.Echo) {
 }
 
 func bindMiddlewares(e *echo.Echo) {
+	e.Use(echoMW.Logger())
+	e.Use(echoMW.Recover())
+
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			if err := next(c); err != nil {
@@ -54,8 +59,7 @@ func bindMiddlewares(e *echo.Echo) {
 				}
 
 				// print error log
-				log.Fatalf("Error(%d): %s\n Detail: %s", wrapError.Code, wrapError.Message, wrapError.Details)
-
+				log.Printf("Error(%d): %s\n\t-> Detail: %s", wrapError.Code, wrapError.Message, wrapError.Details)
 				return c.JSON(wrapError.StatusCode, map[string]string{
 					"error": wrapError.Message,
 				})
