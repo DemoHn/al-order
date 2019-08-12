@@ -57,10 +57,7 @@ func teardown() error {
 	if err := util.ExecMigration(m["DATABASE_URL"], "../sql/down.sql"); err != nil {
 		return err
 	}
-	if err := db.Close(); err != nil {
-		return err
-	}
-	return nil
+	return db.Close()
 }
 
 func TestSaveNewOrder(t *testing.T) {

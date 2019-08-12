@@ -17,6 +17,7 @@ var (
 	dFindOneOrder      func(*sql.DB, string) (*Order, error)
 	dUpdateOrderStatus func(*sql.DB, string, OrderStatus) error
 	dListOrders        func(*sql.DB, int, int) ([]Order, error)
+	gGetRouteDistance  func(LocationInfo) (bool, float32, error)
 	rAddOrderLock      func(*redis.Client, string) (bool, error)
 	rDelOrderLock      func(*redis.Client, string) error
 	gdb                *sql.DB
@@ -53,7 +54,7 @@ func PlaceOrder(input LocationInput) (*OrderResponse, *Error) {
 	orderID := newUUID()
 
 	// 01. get distance data from GoogleMap direction API
-	hasRoute, distance, err := GetRouteDistance(loc)
+	hasRoute, distance, err := gGetRouteDistance(loc)
 	if err != nil {
 		return nil, ErrGoogleMapService(err)
 	}
@@ -203,6 +204,7 @@ func init() {
 	dFindOneOrder = FindOneOrder
 	dUpdateOrderStatus = UpdateOrderStatus
 	dListOrders = ListOrders
+	gGetRouteDistance = GetRouteDistance
 	rAddOrderLock = addOrderLock
 	rDelOrderLock = deleteOrderLock
 }
