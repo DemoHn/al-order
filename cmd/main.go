@@ -21,26 +21,28 @@ func init() {
 	flag.StringVar(&envFile, "envFile", ".env", "environment file")
 	flag.StringVar(&sqlFile, "sqlFile", "", "assign migration file. only used on [migration]")
 	// set default host & port
-	host = "127.0.0.1"
-	port = 8080
+	flag.StringVar(&host, "host", "127.0.0.1", "assign host")
+	flag.IntVar(&port, "port", 8080, "listen port")
 }
 
 func main() {
 	flag.Parse()
-	var execArg = flag.Arg(0)
+	//var execArg = flag.Arg(0)
 	var err error
 
 	if envFile != "" {
 		util.RegisterEnvFromFile(envFile)
 	}
 
-	if execArg == "migration" {
-		err = util.ExecMigration(os.Getenv(dbEnvKey), sqlFile)
-		if err != nil {
-			log.Fatal(err)
-		}
-		return
+	//if execArg == "migration" {
+	err = util.ExecMigration(os.Getenv(dbEnvKey), sqlFile)
+	if err != nil {
+		log.Fatal(err)
 	}
+
+	log.Printf("Database Migration: %s succeed", sqlFile)
+	//		return
+	//}
 
 	// start server
 	StartServer(host, port)

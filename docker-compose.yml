@@ -9,15 +9,17 @@ services:
       - MYSQL_DATABASE=al-order
     ports:
       - target: 3306
-        published: 3862
-        mode: host
+        published: 3306
+        mode: host    
   redis:
     image: redis:4.0.14
     ports:
       - target: 6379
         published: 6379
-        mode: host 
+        mode: host
   al-order:
+    env_file:
+      - .env
     build:
       context: .
     ports:
@@ -27,3 +29,5 @@ services:
     depends_on:
       - mysql
       - redis
+    entrypoint: /bin/alorder
+    command: "-sqlFile /bin/sql/up.sql -host 0.0.0.0"

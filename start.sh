@@ -1,3 +1,8 @@
 #!/bin/sh
-docker-compose build al-order
-docker-compose up
+run () {
+  # run mysql & redis (to host network)
+  docker-compose stop && docker-compose up
+  # create container  
+}
+
+run
